@@ -1,0 +1,5 @@
+.env
+asyncline/
+SCvenv/
+test/
+node_modules/
