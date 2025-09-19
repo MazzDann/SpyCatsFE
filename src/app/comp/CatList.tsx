@@ -17,16 +17,21 @@ export default function CatList({
 }) {
   const [cats, setCats] = useState<Cat[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCats = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getCats();
+      setCats(data);
+    } catch (err) {
+      setError("Failed to fetch cats");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchCats() {
-      try {
-        const data = await getCats();
-        setCats(data);
-      } catch (err) {
-        setError("Failed to fetch cats");
-      }
-    }
     fetchCats();
   }, []);
 
@@ -41,6 +46,7 @@ export default function CatList({
 
   return (
     <div className="mt-4">
+      {isLoading && <p>Loading cats...</p>}
       {error && <p className="text-red-500">{error}</p>}
       <ul className="space-y-2">
         {cats.map((cat) => (
@@ -48,16 +54,16 @@ export default function CatList({
             <p>
               <strong>{cat.name}</strong> ({cat.breed}, {cat.years_of_experience} years)
             </p>
-            <p>Salary: ${cat.salary}</p>
+            <p>Salary: ${cat.salary.toFixed(2)}</p>
             <button
               onClick={() => onEdit(cat)}
-              className="mr-2 text-blue-500"
+              className="mr-2 text-blue-500 hover:underline"
             >
               Edit Salary
             </button>
             <button
               onClick={() => handleDelete(cat.id)}
-              className="text-red-500"
+              className="text-red-500 hover:underline"
             >
               Delete
             </button>

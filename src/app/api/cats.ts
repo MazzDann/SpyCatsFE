@@ -2,6 +2,14 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000";
 
+export interface Cat {
+  id: number;
+  name: string;
+  years_of_experience: number;
+  breed: string;
+  salary: number;
+}
+
 export const getCats = async () => {
     console.log("where")
   const response = await axios.get(`${API_URL}/cats/`);
@@ -22,8 +30,12 @@ export const createCat = async (cat: {
 };
 
 export const updateCatSalary = async (id: number, salary: number) => {
-  const response = await axios.put(`${API_URL}/cats/${id}/salary`, { salary });
-  return response.data;
+  try {
+    const response = await axios.put(`${API_URL}/cats/${id}/salary`, { salary });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.detail || "Failed to update salary");
+  }
 };
 
 export const deleteCat = async (id: number) => {
